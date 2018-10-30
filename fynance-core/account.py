@@ -1,4 +1,4 @@
-import argparse as ap
+import expenditure as exp
 
 class Account:
     """
@@ -7,36 +7,30 @@ class Account:
     """
 
     def __init__(self, name):
-        self._funds = 0
-        self._expenditures = []
-        self._current_balance = 0
-        self._name = name
-        self._budget = None
+        self.funds = 0
+        self.expenditures = []
+        self.currentbalance = 0
+        self.name = name
+        self.categories = []
 
-    def _update_current_balance(self):
+    def update_current_balance(self):
         """
         Function to update the current balance, typically after an expenditure has been added
         """
-        if len(self._expenditures()) > 0:
+        if len(self.expenditures()) > 0:
             total = 0
-            for item in self._expenditures:
+            for item in self.expenditures:
                 total += item["amount"]
 
-            self._current_balance = self._funds - total
+            self.currentbalance = self.funds - total
         
         else:
-            self._current_balance = self._funds
+            self.currentbalance = self.funds
 
-    def _add_expenditures(self, name, description, category, value):
-        """
-        Function that will add a single expenditure, in the form
-        of a dict, to the expenditures attribute
-        """
-        expenditure = {}
-        expenditure["name"] = name
-        expenditure["description"] = description
-        expenditure["category"] = category
-        expenditure["value"] = value
-
-        self._expenditures.append(expenditure)
-        self._update_current_balance()
+    def add_expenditure(self, name, desc, amount, category):
+        expenditure = exp.Expenditure(name=name, desc=desc,
+                                      amount=amount, category=category)
+        
+        self.expenditures.append(expenditure)
+        self.update_current_balance()
+        # Must call update_current_balance to update after adding the expenditure
