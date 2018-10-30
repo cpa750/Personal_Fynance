@@ -11,50 +11,32 @@ class Account:
         self._expenditures = []
         self._current_balance = 0
         self._name = name
+        self._budget = None
 
-    # Defining getters and setters
-    @property
-    def _funds(self):
-        return self._funds
+    def _update_current_balance(self):
+        """
+        Function to update the current balance, typically after an expenditure has been added
+        """
+        if len(self._expenditures()) > 0:
+            total = 0
+            for item in self._expenditures:
+                total += item["amount"]
 
-    @_funds.setter
-    def _funds(self, value):
-        if value < 0:
-            raise ValueError("Funds must be greater than 0.")
+            self._current_balance = self._funds - total
+        
         else:
-            self._funds = value
+            self._current_balance = self._funds
 
-    @property
-    def _expenditures(self):
-        return self._expenditures
+    def _add_expenditures(self, name, description, category, value):
+        """
+        Function that will add a single expenditure, in the form
+        of a dict, to the expenditures attribute
+        """
+        expenditure = {}
+        expenditure["name"] = name
+        expenditure["description"] = description
+        expenditure["category"] = category
+        expenditure["value"] = value
 
-    @_expenditures.setter
-    def _expenditures(self, expenditure):
-        # Takes an expenditure object (defined later)
         self._expenditures.append(expenditure)
-
-    @property
-    def _current_balance(self):
-        return self._current_balance
-    
-    @_current_balance.setter
-    def _current_balance(self, value):
-        if value < 0:
-            raise ValueError("New current balance must be greater than 0.")
-        else:
-            self._current_balance = value
-
-    @property
-    def _name(self):
-        return self._name
-
-    @_name.setter
-    def _name(self, value):
-        self._name = value
-
-    def update_expenditures(self):
-        pass
-        # TODO: Define once the expenditures class is defined
-
-# TODO: Add expenditure class
-# TODO: Add method to subtract the expenditures in the list from funds to get the current balance
+        self._update_current_balance()

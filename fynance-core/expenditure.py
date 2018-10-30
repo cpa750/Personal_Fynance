@@ -1,2 +1,0 @@
-class Expenditure:
-    pass
