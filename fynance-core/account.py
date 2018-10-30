@@ -19,7 +19,7 @@ class Account:
 
     @_funds.setter
     def _funds(self, value):
-        if value > 0:
+        if value < 0:
             raise ValueError("Funds must be greater than 0.")
         else:
             self._funds = value
@@ -33,6 +33,28 @@ class Account:
         # Takes an expenditure object (defined later)
         self._expenditures.append(expenditure)
 
-# TODO: Finish writing getters and setters
+    @property
+    def _current_balance(self):
+        return self._current_balance
+    
+    @_current_balance.setter
+    def _current_balance(self, value):
+        if value < 0:
+            raise ValueError("New current balance must be greater than 0.")
+        else:
+            self._current_balance = value
+
+    @property
+    def _name(self):
+        return self._name
+
+    @_name.setter
+    def _name(self, value):
+        self._name = value
+
+    def update_expenditures(self):
+        pass
+        # TODO: Define once the expenditures class is defined
+
 # TODO: Add expenditure class
 # TODO: Add method to subtract the expenditures in the list from funds to get the current balance
