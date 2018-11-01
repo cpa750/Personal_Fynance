@@ -8,11 +8,15 @@ class Account:
     """
 
     def __init__(self, name):
+        self.name = name
         self.funds = 0
         self.expenditures = []
         self.currentbalance = 0
-        self.name = name
         self.categories = {}
+        # TODO: Change so funds etc. can be flexible upon instantiation
+
+    def __str__(self):
+        return "Account {}".format(self.name)
 
     def update_current_balance(self):
         # Function to update the current balance, typically after an expenditure has been added
@@ -54,7 +58,6 @@ class Account:
         and get the category class
         """
 
-
     def add_category(self, account, name, desc, budget):
         category = cat.Category(account=self, name=name,
                                  desc=desc, budget=budget)
@@ -64,5 +67,3 @@ class Account:
     def rem_category(self, name):
         if name in self.categories:
             del self.categories[name]
-
-        # Must call update_current_balance to update after adding the expenditure

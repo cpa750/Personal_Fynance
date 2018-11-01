@@ -14,10 +14,13 @@ class Category:
 
     def add_expenditure(expenditure):
         self.expenditures.append(expenditure)
-        self.sync_expenditures()
+        self.update_funds()
 
     def update_funds(self):
-        # Function to sync the expenditures in the account with that of a category
+        """
+        Function to sync the expenditures in the account with that of a category,
+        particularly after adding an expenditure to the category
+        """
         for expenditure in self.expenditures:
             costs += expenditure.amount
         
