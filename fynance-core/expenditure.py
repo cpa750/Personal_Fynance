@@ -8,3 +8,6 @@ class Expenditure:
         self.amount = amount
         self.category = category
         # When instantiating, category should be selected from Account.categories
+
+    def __str__(self):
+        return "Expenditure {}".format(self.name)

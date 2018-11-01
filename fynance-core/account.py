@@ -32,6 +32,12 @@ class Account:
 
     
     def add_expenditure(self, name, desc, amount, category):
+        """
+        This function adds an expenditure to the account.
+        In addition, if the expenditure's category is in the
+        account's list of categories, it will also add the
+        expenditure to the category.
+        """
         expenditure = exp.Expenditure(name=name, desc=desc,
                                       amount=amount, category=category)
         

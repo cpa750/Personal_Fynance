@@ -12,6 +12,9 @@ class Category:
         self.funds = budget
         self.expenditures = []
 
+    def __str__(self):
+        return "Category {}".format(self.name)
+
     def add_expenditure(expenditure):
         self.expenditures.append(expenditure)
         self.update_funds()
