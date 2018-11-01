@@ -12,7 +12,6 @@ class Account:
         self.funds = funds
         self.monthly_income = monthly_income
         self.expenditures = []
-        self.currentbalance = 0
         self.categories = {}
         # Decided to ultimately use a dict here as access is
         # quicker than a list
@@ -27,12 +26,8 @@ class Account:
             for item in self.expenditures:
                 total += item["amount"]
 
-            self.currentbalance = self.funds - total
-        
-        else:
-            self.currentbalance = self.funds
+            self.funds -= total
 
-    
     def add_expenditure(self, name, desc, amount, category):
         """
         This function adds an expenditure to the account.
