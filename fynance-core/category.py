@@ -9,10 +9,16 @@ class Category:
         self.account = account
         self.desc = desc
         self.budget = budget
-        self.expenditures = None
+        self.funds = budget
+        self.expenditures = []
 
-    def sync_expenditures(self):
+    def add_expenditure(expenditure):
+        self.expenditures.append(expenditure)
+        self.sync_expenditures()
+
+    def update_funds(self):
         # Function to sync the expenditures in the account with that of a category
-        self.expenditures = [x for x in self.account.expenditures if x.category==self.name]
-        # List comprehension of all the expenditures in the account if the expenditure's
-        # category is the same as the category's name
+        for expenditure in self.expenditures:
+            costs += expenditure.amount
+        
+        self.funds = self.budget - costs
