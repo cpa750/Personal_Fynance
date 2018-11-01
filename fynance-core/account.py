@@ -17,7 +17,7 @@ class Account:
         """
         Function to update the current balance, typically after an expenditure has been added
         """
-        if len(self.expenditures()) > 0:
+        if len(self.expenditures) > 0:
             total = 0
             for item in self.expenditures:
                 total += item["amount"]
@@ -26,7 +26,7 @@ class Account:
         
         else:
             self.currentbalance = self.funds
-
+    
     def add_expenditure(self, name, desc, amount, category):
         expenditure = exp.Expenditure(name=name, desc=desc,
                                       amount=amount, category=category)
