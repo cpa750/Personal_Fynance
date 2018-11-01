@@ -7,13 +7,15 @@ class Account:
     Holds things such a monthly income, expenditures, etc.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, funds, monthly_income):
         self.name = name
-        self.funds = 0
+        self.funds = funds
+        self.monthly_income = monthly_income
         self.expenditures = []
         self.currentbalance = 0
         self.categories = {}
-        # TODO: Change so funds etc. can be flexible upon instantiation
+        # Decided to ultimately use a dict here as access is
+        # quicker than a list
 
     def __str__(self):
         return "Account {}".format(self.name)
@@ -73,3 +75,5 @@ class Account:
     def rem_category(self, name):
         if name in self.categories:
             del self.categories[name]
+
+    # TODO: Write in ablility to automagically top-up the monthly income
