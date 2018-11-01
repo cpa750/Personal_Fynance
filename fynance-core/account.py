@@ -12,7 +12,6 @@ class Account:
         self.funds = funds
         self.monthly_income = monthly_income
         self.expenditures = []
-        self.currentbalance = 0
         self.categories = {}
         # Decided to ultimately use a dict here as access is
         # quicker than a list
@@ -25,23 +24,18 @@ class Account:
         if len(self.expenditures) > 0:
             total = 0
             for item in self.expenditures:
-                total += item["amount"]
+                total += item.amount
 
-            self.currentbalance = self.funds - total
-        
-        else:
-            self.currentbalance = self.funds
-
+            self.funds -= total
     
-    def add_expenditure(self, name, desc, amount, category):
+    def add_expenditure(self, nm, dsc, amt, cat):
         """
         This function adds an expenditure to the account.
         In addition, if the expenditure's category is in the
         account's list of categories, it will also add the
         expenditure to the category.
         """
-        expenditure = exp.Expenditure(name=name, desc=desc,
-                                      amount=amount, category=category)
+        expenditure = exp.Expenditure(name=nm, desc=dsc, amount=amt, category=cat)
         
         self.expenditures.append(expenditure)
         self.update_current_balance()
@@ -50,9 +44,10 @@ class Account:
         if category_name is not None:
             category = self.categories[category_name]
             category.add_expenditure(expenditure)
-            category.sync_expenditures()
+            category.update_funds()
 
-    def check_for_cat(category_name):
+
+    def check_for_cat(self, category_name):
         for key in self.categories:
             if category_name == key:
                 return category_name
@@ -66,7 +61,7 @@ class Account:
         and get the category class
         """
 
-    def add_category(self, account, name, desc, budget):
+    def add_category(self, name, desc, budget):
         category = cat.Category(account=self, name=name,
                                  desc=desc, budget=budget)
         

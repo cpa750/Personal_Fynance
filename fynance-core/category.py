@@ -15,7 +15,7 @@ class Category:
     def __str__(self):
         return "Category {}".format(self.name)
 
-    def add_expenditure(expenditure):
+    def add_expenditure(self, expenditure):
         self.expenditures.append(expenditure)
         self.update_funds()
 
@@ -24,6 +24,7 @@ class Category:
         Function to sync the expenditures in the account with that of a category,
         particularly after adding an expenditure to the category
         """
+        costs = 0
         for expenditure in self.expenditures:
             costs += expenditure.amount
         
