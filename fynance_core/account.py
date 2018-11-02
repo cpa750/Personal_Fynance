@@ -3,6 +3,8 @@ import category as cat
 
 from datetime import date, timedelta
 
+import shelve
+
 class Account:
     """
     Main class for the account holder.
@@ -82,3 +84,11 @@ class Account:
         if date.now() >= self.pay_day + timedelta(days=30):
             self.funds += self.monthly_income
             self.pay_day += timedelta(weeks=4)
+
+    def sync(self):
+        """
+        Function to write the account to the shelf after modifying.
+        Call after user commands.
+        """
+        with shelve.open("accounts", 'c') as shelf:
+            shelf[self.name] = self
