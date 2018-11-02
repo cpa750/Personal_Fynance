@@ -15,7 +15,7 @@ class Category:
     def __str__(self):
         return "Category {}".format(self.name)
 
-    def add_expenditure(expenditure):
+    def add_expenditure(self, expenditure):
         self.expenditures.append(expenditure)
         self.update_funds()
 

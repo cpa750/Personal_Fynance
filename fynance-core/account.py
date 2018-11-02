@@ -47,7 +47,7 @@ class Account:
             category.add_expenditure(expenditure)
             category.sync_expenditures()
 
-    def check_for_cat(category_name):
+    def check_for_cat(self, category_name):
         for key in self.categories:
             if category_name == key:
                 return category_name
