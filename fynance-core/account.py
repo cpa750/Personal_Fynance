@@ -1,6 +1,8 @@
 import expenditure as exp
 import category as cat
 
+from datetime import date, timedelta
+
 class Account:
     """
     Main class for the account holder.
@@ -13,6 +15,7 @@ class Account:
         self.monthly_income = monthly_income
         self.expenditures = []
         self.categories = {}
+        self.pay_day = date.today()
         # Decided to ultimately use a dict here as access is
         # quicker than a list
 
@@ -70,5 +73,13 @@ class Account:
     def rem_category(self, name):
         if name in self.categories:
             del self.categories[name]
+
+    def check_for_pay_day(self):
+        """
+        Method to check if a payday has passed, and if
+        it has, automatically add funds to the account
+        """
+        if date.now() >= self.pay_day + timedelta(month=1):
+            pass
 
     # TODO: Write in ablility to automagically top-up the monthly income
