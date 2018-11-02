@@ -79,7 +79,6 @@ class Account:
         Method to check if a payday has passed, and if
         it has, automatically add funds to the account
         """
-        if date.now() >= self.pay_day + timedelta(month=1):
-            pass
-
-    # TODO: Write in ablility to automagically top-up the monthly income
+        if date.now() >= self.pay_day + timedelta(days=30):
+            self.funds += self.monthly_income
+            self.pay_day += timedelta(weeks=4)
