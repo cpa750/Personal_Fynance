@@ -1,4 +1,4 @@
-from fynance_core import account, category, expenditure
+from fynance_core import account
 
 import argparse, os, shelve
 
@@ -46,6 +46,13 @@ def first_setup():
     add_category()
     # TODO: Write feature to detect if the accounts file already exists
 
+functions = {"add_account": add_account, "add_category": add_category,
+             "add_expenditure": add_expenditure, "remove_account": remove_account,
+             "remove_category": remove_category, "remove_expenditure": remove_expenditure,
+             "edit_account": edit_account, "edit_category": edit_category,
+             "edit_expenditure": edit_expenditure, "remove_account": remove_account,
+             "remove_category": remove_category, "remove_expenditure": remove_expenditure}
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", help="Specifies the command to run",
@@ -56,9 +63,9 @@ def main():
     args = parser.parse_args()
 
     func_to_call = "_".join((args.command, args.object))
-    try:
-        func_to_call()
-    except NameError:
-        print("Not a valid command/object!")
+    functions[func_to_call]()
+
+if __name__ == "__main__":
+    main()
 
 # TODO: FIX THIS ABSOLUTE MESS OF A SCRIPT

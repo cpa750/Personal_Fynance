@@ -1,5 +1,5 @@
-import expenditure as exp
-import category as cat
+from . import expenditure as exp
+from . import category as cat
 
 from datetime import date, timedelta
 
