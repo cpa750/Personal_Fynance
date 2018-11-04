@@ -40,6 +40,7 @@ def edit_expenditure():
     pass
 def view_expenditure():
     pass
+# TODO: Write the rest of these
 
 def first_setup():
     add_account()

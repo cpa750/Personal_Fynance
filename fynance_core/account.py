@@ -17,9 +17,9 @@ class Account:
         self.monthly_income = monthly_income
         self.expenditures = []
         self.categories = {}
-        self.pay_day = date.today()
         # Decided to ultimately use a dict here as access is
         # quicker than a list
+        self.pay_day = date.today()
 
     def __str__(self):
         return "Account {}".format(self.name)
