@@ -1,10 +1,15 @@
 from fynance_core import account
 
-import argparse, os, shelve
+import argparse, os, shelve, sys
+
+def get_account(account_name):
+    with shelve.open("accounts") as shelf:
+        account = shelf[account_name]
+        return account
 
 def add_account():
     print("Add Account Wizard")
-    account_name = input("Account name >> ").capitalize()
+    account_name = input("Account name to create >> ").capitalize()
     try:
         account_funds = int(input("Account funds (for none enter 0) >> $"))
         account_monthly_income = int(input("Account monthly income >> $"))
@@ -17,9 +22,38 @@ def add_account():
     acct.sync()
     
 def remove_account():
-    pass
+    print("Account Removal Wizard")
+    with shelve.open("accounts", 'c') as shelf:
+        account_name = input("Account name to remove >> ")
+        try:
+            del shelf[account_name]
+        except KeyError:
+            print("Invalid account name.")
+            print("Valid account names:")
+            for key in shelf:
+                print(key)
+            print("Account removal failed, exiting...")
+
 def edit_account():
-    pass
+    print("Account Editing Wizard")
+    print("To keep a current value, simply press enter")
+    account_name = input("Account name to edit >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name.")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for key in shelf:
+                print(key)
+        print("Account removal failed, exiting...")
+        sys.exit()
+
+    for attribute in dir(account):
+        new_value = input("New value for {} >> ".format(attribute))
+        if new_value != '':
+            setattr(account, attribute, new_value)
+    
 def view_account():
     pass
 
@@ -65,6 +99,7 @@ def main():
 
     func_to_call = "_".join((args.command, args.object))
     functions[func_to_call]()
+    # TODO: This is a hacky workaround, figure out how to implement subparsers
 
 if __name__ == "__main__":
     main()
