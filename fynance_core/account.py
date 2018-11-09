@@ -24,15 +24,6 @@ class Account:
     def __str__(self):
         return "Account {}".format(self.name)
 
-    def update_current_balance(self):
-        # Function to update the current balance, typically after an expenditure has been added
-        if len(self.expenditures) > 0:
-            total = 0
-            for item in self.expenditures:
-                total += item["amount"]
-
-            self.funds -= total
-
     def add_expenditure(self, name, desc, amount, category):
         """
         This function adds an expenditure to the account.
@@ -44,7 +35,7 @@ class Account:
                                       amount=amount, category=category)
         
         self.expenditures.append(expenditure)
-        self.update_current_balance()
+        self.funds -= expenditure.amount
 
         category_name = self.check_for_cat(expenditure.category)
         if category_name is not None:
@@ -52,7 +43,10 @@ class Account:
             category.add_expenditure(expenditure)
             category.sync_expenditures()
 
-    def check_for_cat(self, category_name):
+for attribute in dir(account):
+        new_value = input("New value for {} (To keep unchanged, press enter) >> ".format(attribute))
+        if new_value != '':
+            setattr(account, attribute, new_value)    def check_for_cat(self, category_name):
         """
         Searching the account.categories dict for the category name.
         The dict is organized cat.name: Category

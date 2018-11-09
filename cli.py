@@ -8,9 +8,21 @@ from fynance_core import account
 
 
 def get_account(account_name):
-    with shelve.open("accounts") as shelf:
+    with shelve.open("accounts", 'c') as shelf:
         account = shelf[account_name]
-        return account
+
+    return account
+
+def get_category(account, category_name):
+        category = account.categories[category_name]
+        return category
+
+def get_expenditure(account_name, expenditure_name):
+    with shelve.open("accounts", 'c') as shelf:
+        account = shelf[account_name]
+        expenditures = [item for item in account.expenditures if item.name == expenditure_name]
+    
+    return expenditures
 
 def add_account():
     print("Add Account Wizard")
@@ -21,10 +33,14 @@ def add_account():
     except ValueError:
         print("Integers only!")
         print("Account creation failed, exiting...")
-        return
-    acct = account.Account(name=account_name, funds=account_funds,
-                           monthly_income=account_monthly_income)
-    acct.sync()
+        sys.exit(errno.EAGAIN)
+    if account_name != '':
+        account = account.Account(name=account_name, funds=account_funds,
+                                  monthly_income=account_monthly_income)
+        account.sync()
+    else:
+        print("Account name may not be left blank")
+        sys.exit(errno.EAGAIN)
     
 def remove_account():
     print("Account Removal Wizard")
@@ -51,13 +67,21 @@ def edit_account():
         with shelve.open("accounts", 'c') as shelf:
             for key in shelf:
                 print(key)
-        print("Account removal failed, exiting...")
+        print("Account edit failed, exiting...")
         sys.exit(errno.EAGAIN)
 
-    for attribute in dir(account):
-        new_value = input("New value for {} (To keep unchanged, press enter) >> ".format(attribute))
-        if new_value != '':
-            setattr(account, attribute, new_value)
+    print("To leave any value unchanged, simply press enter")
+    new_name = input("New name >> ")
+    try:
+        new_monthly_income = int(input("New monthly income >> $"))
+    except ValueError:
+        print("Integers only")
+        sys.exit(errno.EAGAIN)
+
+    if new_name != '':
+        account.name = new_name
+    if new_monthly_income != '':
+        account.monthly_income = new_monthly_income
     
     account.sync()
     
@@ -76,8 +100,7 @@ def view_account():
 
         print("Account information (To see expenditures, use view expenditures)")
         print("Name\tFunds\tMonthly Income")
-        attributes = [account.name, str(account.funds), str(account.monthly_income)]
-        print('\t'.join(attributes), '\n')
+        print(account.name, account.funds, account.monthly_income, sep='\t')
 
         print("Categories:")
         for category in account.categories:
@@ -103,18 +126,103 @@ def add_category():
     
     cat_name = input("Category name >> ")
     cat_desc = input("Category description (if none press enter) >> ")
-    cat_budget = input("Category budget >> $")
+    try:
+        cat_budget = input("Category budget >> $")
+    except ValueError:
+        print("Integers only")
+        sys.exit(errno.EAGAIN)
 
     if cat_name != '':
         account.add_category(name=cat_name, desc=cat_desc, budget=cat_budget)
         account.sync()
+    else:
+        print("Category name may not be left blank")
+        sys.exit(errno.EAGAIN)
 
 def remove_category():
-    pass
+    print("Remove Category Wizard")
+    account_name = input("Account to remove category from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+
+    cat_to_remove = input("Category to remove >> ")
+    try:
+        del account.categories[cat_to_remove]
+        account.sync()
+    except KeyError:
+        print("Invalid category name")
+        print("Valid category names:")
+        for cat in account.categories:
+            print(cat)
+
 def edit_category():
-    pass
+    print("Remove Category Wizard")
+    account_name = input("Account to edit category from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+    
+    cat_to_edit = input("Category to edit >> ")
+    try:
+        category = get_category(account, cat_to_edit)
+    except KeyError:
+        print("Invalid category name")
+        print("Valid category names:")
+        for cat in account.categories:
+            print(cat)
+    
+    print("To leave any value unchanged, simply press enter")
+    new_name = input("New name >> ")
+    new_desc = input("New description >> ")
+    try:
+        new_budget = input("New budget >> $")
+        if new_budget != '':
+            new_budget = int(new_budget)
+
+    except ValueError:
+        print("Integers only")
+        sys.exit(errno.EAGAIN)
+
+    if new_name != '':
+        category.name = new_name
+    if new_desc != '':
+        category.desc = new_desc
+    if new_budget != '':
+        category.budget = new_budget
+
 def view_category():
-    pass
+    account_name = input("Account to view category from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+    
+    cat_name = input("Category to view >> ")
+    try:
+        category = get_category(account, cat_name)
+    except KeyError:
+        print("Invalid category name")
+        print("Valid category names:")
+        for cat in account.categories:
+            print(cat)
+    
+    print("Name\tDesc.\tBudget")
+    print(category.name, category.desc, category.budget, sep='\t')
 
 def add_expenditure():
     pass
