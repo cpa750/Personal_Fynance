@@ -277,7 +277,7 @@ def edit_expenditure():
     sys.exit(0)
 
 def view_expenditures():
-    account_name = input("Account to remove expenditure from >> ")
+    account_name = input("Account to view expenditure from >> ")
     try:
         account = get_account(account_name)
     except KeyError:
@@ -302,7 +302,7 @@ functions = {"add_account": add_account, "add_category": add_category,
              "remove_category": remove_category, "remove_expenditure": remove_expenditure,
              "edit_account": edit_account, "edit_category": edit_category,
              "view_account": view_account, "view_category": view_category,
-             "view_expenditures": view_expenditures, "edit_expenditure": edit_expenditure}
+             "view_expenditure": view_expenditures, "edit_expenditure": edit_expenditure}
 
 def main():
     parser = argparse.ArgumentParser()
@@ -315,6 +315,7 @@ def main():
 
     func_to_call = "_".join((args.command.lower(), args.object.lower()))
     functions[func_to_call]()
+    # TODO: Rewrite this mess with subparsers and default commands
 
 if __name__ == "__main__":
     main()
