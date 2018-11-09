@@ -150,6 +150,7 @@ def remove_category():
         with shelve.open("accounts", 'c') as shelf:
             for item in shelf:
                 print(item)
+        sys.exit(errno.EAGAIN)
 
     cat_to_remove = input("Category to remove >> ")
     try:
@@ -160,9 +161,10 @@ def remove_category():
         print("Valid category names:")
         for cat in account.categories:
             print(cat)
+        sys.exit(errno.EAGAIN)
 
 def edit_category():
-    print("Remove Category Wizard")
+    print("Edit Category Wizard")
     account_name = input("Account to edit category from >> ")
     try:
         account = get_account(account_name)
@@ -172,6 +174,7 @@ def edit_category():
         with shelve.open("accounts", 'c') as shelf:
             for item in shelf:
                 print(item)
+        sys.exit(errno.EAGAIN)
     
     cat_to_edit = input("Category to edit >> ")
     try:
@@ -181,6 +184,7 @@ def edit_category():
         print("Valid category names:")
         for cat in account.categories:
             print(cat)
+        sys.exit(errno.EAGAIN)
     
     print("To leave any value unchanged, simply press enter")
     new_name = input("New name >> ")
@@ -211,6 +215,7 @@ def view_category():
         with shelve.open("accounts", 'c') as shelf:
             for item in shelf:
                 print(item)
+        sys.exit(errno.EAGAIN)
     
     cat_name = input("Category to view >> ")
     try:
@@ -225,15 +230,67 @@ def view_category():
     print(category.name, category.desc, category.budget, sep='\t')
 
 def add_expenditure():
-    pass
+    account_name = input("Name of account to add expenditure  >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+        sys.exit(errno.EAGAIN)
+
+    exp_name = input("Expenditure name >> ")
+    exp_desc = input("Expenditure description >> ")
+    exp_cat = input("Expenditure category >> ")
+    try:
+        exp_amount = int(input("Expenditure amount >> $"))
+    except ValueError:
+        print("Integers only")
+        sys.exit(errno.EAGAIN)
+    
+    if exp_name != '' and exp.amount > 0:
+        account.add_expenditure(exp_name, exp_desc, exp_amount, exp_cat)
+
 def remove_expenditure():
-    pass
+    account_name = input("Account to remove expenditure from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+        sys.exit(errno.EAGAIN)
+
+    exp_to_remove = input("Name of expenditure to remove >> ")
+    for expenditure in account.expenditures:
+        if expenditure.name == exp_to_remove:
+            account.remove(expenditure)
+    # Due to the fact that account.expenditures is a list, this unfortunate for loop is necessary
+    # TODO: Rewrite account.expenditures so it's a dict
+
 def edit_expenditure():
-    pass
+    print("Expenditures are not editable.")
+    sys.exit(0)
 
 def view_expenditures():
-    pass
-# TODO: Write the rest of these
+    account_name = input("Account to remove expenditure from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+        sys.exit(errno.EAGAIN)
+
+    print("Name\tDesc\tAmount\tCategory")
+    for item in account.expenditures:
+        print(item.name, item.desc, item.amount, item.category, sep='\t')
 
 def first_setup():
     add_account()
@@ -244,8 +301,8 @@ functions = {"add_account": add_account, "add_category": add_category,
              "add_expenditure": add_expenditure, "remove_account": remove_account,
              "remove_category": remove_category, "remove_expenditure": remove_expenditure,
              "edit_account": edit_account, "edit_category": edit_category,
-             "edit_expenditure": edit_expenditure, "view_account": view_account,
-             "view_category": view_category, "view_expenditures": view_expenditures}
+             "view_account": view_account, "view_category": view_category,
+             "view_expenditures": view_expenditures, "edit_expenditure", edit_expenditure}
 
 def main():
     parser = argparse.ArgumentParser()
@@ -256,11 +313,8 @@ def main():
 
     args = parser.parse_args()
 
-    func_to_call = "_".join((args.command, args.object))
+    func_to_call = "_".join((args.command.lower(), args.object.lower()))
     functions[func_to_call]()
-    # TODO: This is a hacky workaround, figure out how to implement subparsers
 
 if __name__ == "__main__":
     main()
-
-# TODO: Fix this absolute mess of a script
