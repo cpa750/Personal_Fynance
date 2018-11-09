@@ -302,7 +302,7 @@ functions = {"add_account": add_account, "add_category": add_category,
              "remove_category": remove_category, "remove_expenditure": remove_expenditure,
              "edit_account": edit_account, "edit_category": edit_category,
              "view_account": view_account, "view_category": view_category,
-             "view_expenditures": view_expenditures, "edit_expenditure", edit_expenditure}
+             "view_expenditures": view_expenditures, "edit_expenditure": edit_expenditure}
 
 def main():
     parser = argparse.ArgumentParser()
