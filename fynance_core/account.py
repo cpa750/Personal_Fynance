@@ -53,20 +53,19 @@ class Account:
             category.sync_expenditures()
 
     def check_for_cat(self, category_name):
-        for key in self.categories:
-            if category_name == key:
-                return category_name
-        return None
         """
         Searching the account.categories dict for the category name.
         The dict is organized cat.name: Category
         Hence the above spaghetti code.
         This is so the string identifying the category in the expense class
         can easily match up with a category with an entry in account.categories,
-        and get the category class
-        """
+        and get the category class"""
+        for key in self.categories:
+            if category_name == key:
+                return category_name
+        return None
 
-    def add_category(self, account, name, desc, budget):
+    def add_category(self, name, desc, budget):
         category = cat.Category(account=self, name=name,
                                  desc=desc, budget=budget)
         

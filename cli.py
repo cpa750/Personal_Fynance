@@ -55,9 +55,11 @@ def edit_account():
         sys.exit(errno.EAGAIN)
 
     for attribute in dir(account):
-        new_value = input("New value for {} >> ".format(attribute))
+        new_value = input("New value for {} (To keep unchanged, press enter) >> ".format(attribute))
         if new_value != '':
             setattr(account, attribute, new_value)
+    
+    account.sync()
     
 def view_account():
     with shelve.open("accounts", 'c') as accounts:
@@ -67,25 +69,46 @@ def view_account():
             account_name = input("Account to view >> ")
             
         try:
-            acct = accounts[account_name]
-            print(acct)
+            account = accounts[account_name]
         except KeyError:
             print("Not a valid account name!")
             sys.exit(errno.EAGAIN)
 
-        print("""Account information (To see expenditures, use view expenditures)\n
-Account Name\tFunds\tMonthly Income""")
-
-        attributes = [acct.name, str(acct.funds), str(acct.monthly_income)]
+        print("Account information (To see expenditures, use view expenditures)")
+        print("Name\tFunds\tMonthly Income")
+        attributes = [account.name, str(account.funds), str(account.monthly_income)]
         print('\t'.join(attributes), '\n')
+
         print("Categories:")
-        for category in acct.categories:
+        for category in account.categories:
             print(category)
             # The category key is simply the name of the category, so this code just gets the name of the category
             # As it's much simpler than doing acct.categories[category].name
 
+        print('\n')
+
 def add_category():
-    pass
+    print("Add Category Wizard")
+    acct_to_get = input("Account to add the category >> ")
+
+    try:
+        account = get_account(acct_to_get)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+        sys.exit(errno.EAGAIN)
+    
+    cat_name = input("Category name >> ")
+    cat_desc = input("Category description (if none press enter) >> ")
+    cat_budget = input("Category budget >> $")
+
+    if cat_name != '':
+        account.add_category(name=cat_name, desc=cat_desc, budget=cat_budget)
+        account.sync()
+
 def remove_category():
     pass
 def edit_category():
