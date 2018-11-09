@@ -8,7 +8,7 @@ class Category:
         self.name = name
         self.account = account
         self.desc = desc
-        self.budget = sbudget
+        self.budget = budget
         self.funds = budget
         self.expenditures = []
 

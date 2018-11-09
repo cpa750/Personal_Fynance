@@ -1,6 +1,11 @@
+import argparse
+import errno
+import os
+import shelve
+import sys
+
 from fynance_core import account
 
-import argparse, os, shelve, sys
 
 def get_account(account_name):
     with shelve.open("accounts") as shelf:
@@ -47,7 +52,7 @@ def edit_account():
             for key in shelf:
                 print(key)
         print("Account removal failed, exiting...")
-        sys.exit()
+        sys.exit(errno.EAGAIN)
 
     for attribute in dir(account):
         new_value = input("New value for {} >> ".format(attribute))
@@ -55,7 +60,29 @@ def edit_account():
             setattr(account, attribute, new_value)
     
 def view_account():
-    pass
+    with shelve.open("accounts", 'c') as accounts:
+        print("Accounts available to view: ")
+        for account in accounts:
+            print(account)
+            account_name = input("Account to view >> ")
+            
+        try:
+            acct = accounts[account_name]
+            print(acct)
+        except KeyError:
+            print("Not a valid account name!")
+            sys.exit(errno.EAGAIN)
+
+        print("""Account information (To see expenditures, use view expenditures)\n
+Account Name\tFunds\tMonthly Income""")
+
+        attributes = [acct.name, str(acct.funds), str(acct.monthly_income)]
+        print('\t'.join(attributes), '\n')
+        print("Categories:")
+        for category in acct.categories:
+            print(category)
+            # The category key is simply the name of the category, so this code just gets the name of the category
+            # As it's much simpler than doing acct.categories[category].name
 
 def add_category():
     pass
@@ -72,7 +99,8 @@ def remove_expenditure():
     pass
 def edit_expenditure():
     pass
-def view_expenditure():
+
+def view_expenditures():
     pass
 # TODO: Write the rest of these
 
@@ -85,7 +113,8 @@ functions = {"add_account": add_account, "add_category": add_category,
              "add_expenditure": add_expenditure, "remove_account": remove_account,
              "remove_category": remove_category, "remove_expenditure": remove_expenditure,
              "edit_account": edit_account, "edit_category": edit_category,
-             "edit_expenditure": edit_expenditure}
+             "edit_expenditure": edit_expenditure, "view_account": view_account,
+             "view_category": view_category, "view_expenditures": view_expenditures}
 
 def main():
     parser = argparse.ArgumentParser()
@@ -103,4 +132,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO: FIX THIS ABSOLUTE MESS OF A SCRIPT
+# TODO: Fix this absolute mess of a script

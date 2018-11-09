@@ -1,9 +1,9 @@
-from . import expenditure as exp
-from . import category as cat
-
+import shelve
 from datetime import date, timedelta
 
-import shelve
+from . import category as cat
+from . import expenditure as exp
+
 
 class Account:
     """
