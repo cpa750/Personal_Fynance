@@ -3,7 +3,6 @@ class Category:
     Class for holding information about
     category under an account
     """
-
     def __init__(self, account, name, desc, budget):
         self.name = name
         self.account = account
@@ -17,15 +16,4 @@ class Category:
 
     def add_expenditure(self, expenditure):
         self.expenditures.append(expenditure)
-        self.update_funds()
-
-    def update_funds(self):
-        """
-        Function to sync the expenditures in the account with that of a category,
-        particularly after adding an expenditure to the category
-        """
-        costs = 0
-        for expenditure in self.expenditures:
-            costs += expenditure.amount
-        
-        self.funds = self.budget - costs
+        self.funds -= expenditure.amount
