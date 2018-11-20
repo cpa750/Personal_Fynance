@@ -190,7 +190,6 @@ def edit_category():
         sys.exit(errno.EAGAIN)
     
     print("To leave any value unchanged, simply press enter")
-    new_name = input("New name >> ")
     new_desc = input("New description >> ")
     try:
         new_budget = input("New budget >> $")
@@ -200,8 +199,6 @@ def edit_category():
         print("Integers only")
         sys.exit(errno.EAGAIN)
 
-    if new_name != '':
-        category.name = new_name
     if new_desc != '':
         category.desc = new_desc
     if new_budget != '':

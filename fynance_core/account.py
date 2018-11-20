@@ -49,8 +49,6 @@ class Account:
         if category_name is not None:
             category = self.categories[category_name]
             category.add_expenditure(expenditure)
-            category.update_funds()
-
 
     def check_for_cat(self, category_name):
         """
