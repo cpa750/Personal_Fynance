@@ -4,7 +4,7 @@ import os
 import shelve
 import sys
 
-from fynance_core import account
+from fynance_core import account as acct
 
 
 def get_account(account_name):
@@ -35,7 +35,7 @@ def add_account():
         print("Account creation failed, exiting...")
         sys.exit(errno.EAGAIN)
     if account_name != '':
-        account = account.Account(name=account_name, funds=account_funds,
+        account = acct.Account(name=account_name, funds=account_funds,
                                   monthly_income=account_monthly_income)
         account.sync()
     else:
@@ -90,7 +90,8 @@ def view_account():
         print("Accounts available to view: ")
         for account in accounts:
             print(account)
-            account_name = input("Account to view >> ")
+        
+        account_name = input("Account to view >> ")
             
         try:
             account = accounts[account_name]
@@ -127,7 +128,7 @@ def add_category():
     cat_name = input("Category name >> ")
     cat_desc = input("Category description (if none press enter) >> ")
     try:
-        cat_budget = input("Category budget >> $")
+        cat_budget = int(input("Category budget >> $"))
     except ValueError:
         print("Integers only")
         sys.exit(errno.EAGAIN)
@@ -163,6 +164,8 @@ def remove_category():
             print(cat)
         sys.exit(errno.EAGAIN)
 
+    account.sync()
+
 def edit_category():
     print("Edit Category Wizard")
     account_name = input("Account to edit category from >> ")
@@ -193,7 +196,6 @@ def edit_category():
         new_budget = input("New budget >> $")
         if new_budget != '':
             new_budget = int(new_budget)
-
     except ValueError:
         print("Integers only")
         sys.exit(errno.EAGAIN)
@@ -204,6 +206,8 @@ def edit_category():
         category.desc = new_desc
     if new_budget != '':
         category.budget = new_budget
+
+    account.sync()
 
 def view_category():
     account_name = input("Account to view category from >> ")
@@ -225,6 +229,7 @@ def view_category():
         print("Valid category names:")
         for cat in account.categories:
             print(cat)
+        sys.exit(errno.EAGAIN)
     
     print("Name\tDesc.\tBudget")
     print(category.name, category.desc, category.budget, sep='\t')
@@ -250,8 +255,9 @@ def add_expenditure():
         print("Integers only")
         sys.exit(errno.EAGAIN)
     
-    if exp_name != '' and exp.amount > 0:
+    if exp_name != '' and exp_amount > 0:
         account.add_expenditure(exp_name, exp_desc, exp_amount, exp_cat)
+        account.sync()
 
 def remove_expenditure():
     account_name = input("Account to remove expenditure from >> ")
@@ -268,7 +274,8 @@ def remove_expenditure():
     exp_to_remove = input("Name of expenditure to remove >> ")
     for expenditure in account.expenditures:
         if expenditure.name == exp_to_remove:
-            account.remove(expenditure)
+            account.expenditures.remove(expenditure)
+            account.sync()
     # Due to the fact that account.expenditures is a list, this unfortunate for loop is necessary
     # TODO: Rewrite account.expenditures so it's a dict
 
@@ -291,11 +298,6 @@ def view_expenditures():
     print("Name\tDesc\tAmount\tCategory")
     for item in account.expenditures:
         print(item.name, item.desc, item.amount, item.category, sep='\t')
-
-def first_setup():
-    add_account()
-    add_category()
-    # TODO: Write feature to detect if the accounts file already exists
 
 functions = {"add_account": add_account, "add_category": add_category,
              "add_expenditure": add_expenditure, "remove_account": remove_account,

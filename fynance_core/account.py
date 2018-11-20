@@ -41,7 +41,6 @@ class Account:
         if category_name is not None:
             category = self.categories[category_name]
             category.add_expenditure(expenditure)
-            category.sync_expenditures()
 
     def check_for_cat(self, category_name):
         """

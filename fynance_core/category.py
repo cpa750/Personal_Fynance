@@ -17,4 +17,5 @@ class Category:
 
     def add_expenditure(self, expenditure):
         self.expenditures.append(expenditure)
+        self.funds = int(self.funds)
         self.funds -= expenditure.amount
