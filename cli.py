@@ -4,6 +4,8 @@ import os
 import shelve
 import sys
 
+from tabulate import tabulate
+
 from fynance_core import account as acct
 
 
@@ -100,16 +102,15 @@ def view_account():
             sys.exit(errno.EAGAIN)
 
         print("Account information (To see expenditures, use view expenditures)")
-        print("Name\tFunds\tMonthly Income")
-        print(account.name, account.funds, account.monthly_income, sep='\t')
+        headers = ("Name", "Funds ($)", "Monthly Income ($)")
+        properties = (account.name, account.funds, account.monthly_income)
+        print(tabulate(properties, headers=headers))
 
         print("Categories:")
         for category in account.categories:
             print(category)
             # The category key is simply the name of the category, so this code just gets the name of the category
             # As it's much simpler than doing acct.categories[category].name
-
-        print('\n')
 
 def add_category():
     print("Add Category Wizard")
@@ -231,8 +232,9 @@ def view_category():
             print(cat)
         sys.exit(errno.EAGAIN)
     
-    print("Name\tDesc.\tBudget")
-    print(category.name, category.desc, category.budget, sep='\t')
+    headers = ("Name", "Description", "Budget ($)")
+    properties = (category.name, category.desc, category.budget)
+    print(tabulate(properties, headers=headers))
 
 def add_expenditure():
     account_name = input("Name of account to add expenditure  >> ")
@@ -276,8 +278,6 @@ def remove_expenditure():
         if expenditure.name == exp_to_remove:
             account.expenditures.remove(expenditure)
             account.sync()
-    # Due to the fact that account.expenditures is a list, this unfortunate for loop is necessary
-    # TODO: Rewrite account.expenditures so it's a dict
 
 def edit_expenditure():
     print("Expenditures are not editable.")
@@ -295,9 +295,8 @@ def view_expenditures():
                 print(item)
         sys.exit(errno.EAGAIN)
 
-    print("Name\tDesc\tAmount\tCategory")
-    for item in account.expenditures:
-        print(item.name, item.desc, item.amount, item.category, sep='\t')
+    headers = ("Name", "Description", "Amount ($)", "Category")
+    print(tabulate(account.expenditures, headers=headers))
 
 functions = {"add_account": add_account, "add_category": add_category,
              "add_expenditure": add_expenditure, "remove_account": remove_account,
