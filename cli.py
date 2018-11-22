@@ -1,30 +1,61 @@
+# TODO: fix bug where expenditure is removed but funds are not added back into category if there is one
+# TODO: add proper category support for expenses, not just a string
+    # Must implement get_category
+
 import argparse
+# Used to parse command line arguments to get command to run
 import errno
-import os
+# Used for the appropriate error codes where applicable
 import shelve
+# Used to store all account objects
 import sys
+# Used for system functions, namely sys.exit
 
 from tabulate import tabulate
+# Used to print object attributes in an organized format
 
 from fynance_core import account as acct
 
+def check_for_account(account_name):
+    # Checking if an account exists
+    if account_name in shelve.open("accounts", 'c'):
+        return True
+    else:
+        return False
+
+def check_for_category(account, category_name):
+    # Checking if a category exists. must take an account object as a param
+    if category_name in account.categories:
+        return True
+    else:
+        return False
+
+def check_for_expenditure(account, expenditure_name):
+    # Checking if an exp. exists. must take an account obkject as a param.
+    exp_names = [exp.name for exp in account.expenditures]
+    if expenditure_name in exp_names:
+        return True
+    else:
+        return False
 
 def get_account(account_name):
+    # Getting and returning a specific account object. Must use error handling in case account DNE.
     with shelve.open("accounts", 'c') as shelf:
         account = shelf[account_name]
-
-    return account
+        return account
 
 def get_category(account, category_name):
-        category = account.categories[category_name]
-        return category
+    # Getting and returning a category. Must handle errors, must take account object as param.
+    category = account.categories[category_name]
+    return category
 
-def get_expenditure(account_name, expenditure_name):
-    with shelve.open("accounts", 'c') as shelf:
-        account = shelf[account_name]
-        expenditures = [item for item in account.expenditures if item.name == expenditure_name]
-    
-    return expenditures
+def get_expenditure(account, expenditure_name):
+    # Getting and returning an expenditure. Returns none if exp. DNE. must take account object as param.
+    for exp in account.expenditures:
+        if exp.name == expenditure_name:
+            return exp
+    else:
+        return None
 
 def add_account():
     print("Add Account Wizard")
@@ -36,13 +67,20 @@ def add_account():
         print("Integers only!")
         print("Account creation failed, exiting...")
         sys.exit(errno.EAGAIN)
+
+    if check_for_account(account_name):
+        print("Account name already exists")
+        sys.exit(errno.EAGAIN)
+
     if account_name != '':
         account = acct.Account(name=account_name, funds=account_funds,
                                   monthly_income=account_monthly_income)
         account.sync()
+        # Must call account.sync to write changes to shelf
     else:
         print("Account name may not be left blank")
         sys.exit(errno.EAGAIN)
+    # Cannot create an account with an empty name
     
 def remove_account():
     print("Account Removal Wizard")
@@ -86,6 +124,7 @@ def edit_account():
         account.monthly_income = new_monthly_income
     
     account.sync()
+    # Must call account.sync to write changes to shelf
     
 def view_account():
     with shelve.open("accounts", 'c') as accounts:
@@ -101,10 +140,11 @@ def view_account():
             print("Not a valid account name!")
             sys.exit(errno.EAGAIN)
 
-        print("Account information (To see expenditures, use view expenditures)")
+        print("Account information (To see expenditures, use view expenditure)")
         headers = ("Name", "Funds ($)", "Monthly Income ($)")
-        properties = (account.name, account.funds, account.monthly_income)
+        properties = [[account.name, account.funds, account.monthly_income]]
         print(tabulate(properties, headers=headers))
+        # Tabulate must take a list of lists as a pos. arg.
 
         print("Categories:")
         for category in account.categories:
@@ -134,9 +174,13 @@ def add_category():
         print("Integers only")
         sys.exit(errno.EAGAIN)
 
+    if check_for_category(account, cat_name):
+        print("Category name already exists")
+
     if cat_name != '':
         account.add_category(name=cat_name, desc=cat_desc, budget=cat_budget)
         account.sync()
+        # Must call account.sync to write changes to shelf
     else:
         print("Category name may not be left blank")
         sys.exit(errno.EAGAIN)
@@ -166,6 +210,7 @@ def remove_category():
         sys.exit(errno.EAGAIN)
 
     account.sync()
+    # Must call account.sync to write changes to shelf
 
 def edit_category():
     print("Edit Category Wizard")
@@ -191,7 +236,6 @@ def edit_category():
         sys.exit(errno.EAGAIN)
     
     print("To leave any value unchanged, simply press enter")
-    new_name = input("New name >> ")
     new_desc = input("New description >> ")
     try:
         new_budget = input("New budget >> $")
@@ -201,14 +245,13 @@ def edit_category():
         print("Integers only")
         sys.exit(errno.EAGAIN)
 
-    if new_name != '':
-        category.name = new_name
     if new_desc != '':
         category.desc = new_desc
     if new_budget != '':
         category.budget = new_budget
 
     account.sync()
+    # Must call account.sync to write changes to shelf
 
 def view_category():
     account_name = input("Account to view category from >> ")
@@ -232,8 +275,8 @@ def view_category():
             print(cat)
         sys.exit(errno.EAGAIN)
     
-    headers = ("Name", "Description", "Budget ($)")
-    properties = (category.name, category.desc, category.budget)
+    headers = ("Name", "Description", "Budget ($)", "Funds ($)")
+    properties = [[category.name, category.desc, category.budget, category.funds]]
     print(tabulate(properties, headers=headers))
 
 def add_expenditure():
@@ -250,11 +293,18 @@ def add_expenditure():
 
     exp_name = input("Expenditure name >> ")
     exp_desc = input("Expenditure description >> ")
-    exp_cat = input("Expenditure category >> ")
+    exp_cat = input("Expenditure category (For none press enter) >> ")
     try:
         exp_amount = int(input("Expenditure amount >> $"))
     except ValueError:
         print("Integers only")
+        sys.exit(errno.EAGAIN)
+    
+    if exp_cat not in account.categories:
+        exp_cat = None
+
+    if check_for_expenditure(account, exp_name):
+        print("Expenditure already exists")
         sys.exit(errno.EAGAIN)
     
     if exp_name != '' and exp_amount > 0:
@@ -274,14 +324,37 @@ def remove_expenditure():
         sys.exit(errno.EAGAIN)
 
     exp_to_remove = input("Name of expenditure to remove >> ")
-    for expenditure in account.expenditures:
-        if expenditure.name == exp_to_remove:
-            account.expenditures.remove(expenditure)
-            account.sync()
+    exp = get_expenditure(account, exp_to_remove)
+    account.expenditures.remove(exp)
+    account.funds += exp.amount
+    if exp.category != None:
+        exp.category.funds += exp.amount
 
 def edit_expenditure():
-    print("Expenditures are not editable.")
-    sys.exit(0)
+    print("Expenditure editing wizard")
+    account_name = input("Account to edit expenditure from >> ")
+    try:
+        account = get_account(account_name)
+    except KeyError:
+        print("Invalid account name")
+        print("Valid account names:")
+        with shelve.open("accounts", 'c') as shelf:
+            for item in shelf:
+                print(item)
+        sys.exit(errno.EAGAIN)
+
+    exp_name = input("Name of expenditure to edit >> ")
+    exp = get_expenditure(account, exp_name)
+
+    if exp is not None:
+        print("To leave any value unchanged, simply press enter")
+        new_desc = input("New description >> ")
+        if new_desc != '':
+            exp.desc = new_desc
+            account.sync()
+
+    else:
+        print("Expenditure does not exist. To see all expenditures, run \"view expenditure\"")
 
 def view_expenditures():
     account_name = input("Account to view expenditure from >> ")
@@ -295,8 +368,9 @@ def view_expenditures():
                 print(item)
         sys.exit(errno.EAGAIN)
 
+    properties = [[exp.name, exp.desc, exp.amount, exp.category] for exp in account.expenditures]
     headers = ("Name", "Description", "Amount ($)", "Category")
-    print(tabulate(account.expenditures, headers=headers))
+    print(tabulate(properties, headers=headers))
 
 functions = {"add_account": add_account, "add_category": add_category,
              "add_expenditure": add_expenditure, "remove_account": remove_account,
@@ -304,6 +378,7 @@ functions = {"add_account": add_account, "add_category": add_category,
              "edit_account": edit_account, "edit_category": edit_category,
              "view_account": view_account, "view_category": view_category,
              "view_expenditure": view_expenditures, "edit_expenditure": edit_expenditure}
+             # Mapping strings to actual commands to relate arguments passed in from argparse to actual functions                           
 
 def main():
     parser = argparse.ArgumentParser()
@@ -311,12 +386,18 @@ def main():
                         choices=("add", "remove", "edit", "view"))
     parser.add_argument("object", help="Specifies the type of object to perform the command on",
                         choices=("account", "category", "expenditure"))
+    # Parser takes two arguments: the command, and the object(s) that the command is being performed upon
 
     args = parser.parse_args()
 
     func_to_call = "_".join((args.command.lower(), args.object.lower()))
     functions[func_to_call]()
-    # TODO: Rewrite this mess with subparsers and default commands
+    # Formatting the strings from args to get the appropriate function from the functions dict
 
 if __name__ == "__main__":
+    with shelve.open("accounts", 'c') as shelf:
+        for account in shelf:
+            shelf[account].check_for_pay_day()
+    # Checking for each account's payday every time the program is run, even if args are invalid
+
     main()
