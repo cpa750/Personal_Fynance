@@ -33,7 +33,7 @@ class Account:
             self.funds += self.monthly_income
             self.pay_day += timedelta(days=30)
             for cat in self.categories:
-                cat.funds = cat.budget + cat.funds
+                self.categories[cat].funds = self.categories[cat].budget + self.categories[cat].funds
 
     def sync(self):
         """
