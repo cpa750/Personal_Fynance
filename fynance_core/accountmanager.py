@@ -38,8 +38,7 @@ def edit_account(acct, new_name, new_funds, new_monthly_income):
 
 def view_account(account_name):
     try:
-        with shelve.open("accounts", 'c') as shelf:
-            acct = shelf[account_name]
+        acct = helpers.get_account(account_name)
     except KeyError:
         raise exceptions.AccountViewingFailed("Account viewing failed: account does not exist.")
     
@@ -48,8 +47,7 @@ def view_account(account_name):
 
 def create_category(account_name, cat_name, desc, budget):
     try:
-        with shelve.open("accounts", 'c') as shelf:
-            acct = shelf[account_name]
+        acct = helpers.get_account(account_name)
     except KeyError:
         raise exceptions.CategoryCreationFailed("Category creation failed: account does not exist.")
     
