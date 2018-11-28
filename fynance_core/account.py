@@ -32,6 +32,8 @@ class Account:
         if date.today() >= self.pay_day + timedelta(days=30):
             self.funds += self.monthly_income
             self.pay_day += timedelta(days=30)
+            for cat in self.categories:
+                cat.funds = cat.budget + cat.funds
 
     def sync(self):
         """
