@@ -123,7 +123,59 @@ def add_expenditure(account_name, cat_name, name, desc, amount):
 
     exp = expenditure.Expenditure(name, desc, amount, cat)
     acct.expenditures[name] = exp
+    acct.funds -= exp.amount
+    if exp.category != None:
+        exp.category.funds -= exp.amount
 
     acct.sync()
+
+def remove_expenditure(account_name, expenditure_name):
+    try:
+        acct = helpers.get_account(account_name)
+    except KeyError:
+        raise exceptions.ExpRemovalFailed("Expenditure removal failed: account does not exist.")
+
+    try:
+        exp = helpers.get_expenditure(acct, expenditure_name)
+        del acct.expenditures[expenditure_name]
+    except KeyError:
+        raise exceptions.ExpRemovalFailed("Expenditure removal failed: expenditure does not exist.")
+
+    acct.funds += exp.amount
+    if exp.category != None:
+        exp.category.funds += exp.amount
+
+    acct.sync()
+
+def edit_expenditure(account_name, exp_name, new_desc, new_amount):
+    try:
+        acct = helpers.get_account(account_name)
+    except KeyError:
+        raise exceptions.ExpEditingFailed("Expenditure editiing failed: account does not exist.")
+
+    try:
+        exp = helpers.get_expenditure(acct, exp_name)
+    except KeyError:
+        raise exceptions.ExpEditingFailed("Expenditure editiing failed: expenditure does not exist.")
+    
+    if new_desc != None:
+        exp.desc = new_desc
+    if new_amount != None:
+        difference = new_amount - exp.amount
+        exp.amount = new_amount
+    if exp.category != None:
+        exp.category.funds -= difference
+    acct.funds -= difference
+    acct.sync()
+
+def view_expenditure(account_name):
+    try:
+        acct = helpers.get_account(account_name)
+    except KeyError:
+        raise exceptions.ExpViewingFailed("Expenditure viewing failed: account does not exist.")
+
+    exps = [[exp.name, exp.desc, exp.amount, exp.category.name] for exp in acct.expenditures]
+
+    print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)", "Category"]))
 
 # TODO: Write the rest of these functions
