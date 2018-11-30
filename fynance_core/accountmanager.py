@@ -149,12 +149,12 @@ def edit_expenditure(account_name, exp_name, new_desc, new_amount):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
-        raise exceptions.ExpEditingFailed("Expenditure editiing failed: account does not exist.")
+        raise exceptions.ExpEditingFailed("Expenditure editing failed: account does not exist.")
 
     try:
         exp = helpers.get_expenditure(acct, exp_name)
     except KeyError:
-        raise exceptions.ExpEditingFailed("Expenditure editiing failed: expenditure does not exist.")
+        raise exceptions.ExpEditingFailed("Expenditure editing failed: expenditure does not exist.")
     
     if new_desc != None:
         exp.desc = new_desc
