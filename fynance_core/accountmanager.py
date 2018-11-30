@@ -10,7 +10,7 @@ def add_account(name, funds, monthly_income):
     try:
         acct = account.Account(name, funds, monthly_income)
         with shelve.open("accounts", 'c') as shelf:
-            shelf[acct.name] = account
+            shelf[acct.name] = acct
     except Exception as e:
         raise exceptions.AccountCreationFailed(f"Account creation failed due to error {e}")
 
@@ -21,18 +21,18 @@ def remove_account(account_name):
     except Exception as e:
         raise exceptions.AccountRemovalFailed(f"Account removal failed due to error {e}")
 
-def edit_account(acct, new_name, new_funds, new_monthly_income):
+def edit_account(acct_name, new_name, new_funds, new_monthly_income):
     try:
-        acct_edit = helpers.get_account(acct)
+        acct = helpers.get_account(acct_name)
     except KeyError:
         raise exceptions.AccountEditingFailed("Account editing failed: account does not exist.")
     
     if new_name != None:
-        acct_edit.name = new_name
+        acct.name = new_name
     if new_funds != None:
-        acct_edit.funds = new_funds
+        acct.funds = new_funds
     if new_monthly_income != None:
-        acct_edit.monthly_income = new_monthly_income
+        acct.monthly_income = new_monthly_income
     
     acct.sync()
 
@@ -109,6 +109,10 @@ def view_category(account_name, cat_name):
     
     print(tabulate([[cat.name, cat.desc, cat.funds, cat.budget]],
                    headers=["Name", "Desc.", "Funds ($)", "Budget ($)"]))
+    
+    print("Category Expenditures")
+    exps = [[exp.name, exp.desc, exp.amount] for exp in cat.expenditures]
+    print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)"]))
 
 def add_expenditure(account_name, cat_name, name, desc, amount):
     try:
@@ -180,7 +184,6 @@ def view_expenditure(account_name):
         raise exceptions.ExpViewingFailed("Expenditure viewing failed: account does not exist.")
 
     exps = [[exp.name, exp.desc, exp.amount, exp.category.name] for exp in acct.expenditures]
-
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)", "Category"]))
 
 def check_paydays():
