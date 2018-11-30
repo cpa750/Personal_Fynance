@@ -9,17 +9,18 @@ from . import account, category, exceptions, expenditure, helpers
 def add_account(name, funds, monthly_income):
     try:
         acct = account.Account(name, funds, monthly_income)
-        with shelve.open("accounts", 'c') as shelf:
-            shelf[acct.name] = acct
+        acct.sync()
     except Exception as e:
-        raise exceptions.AccountCreationFailed(f"Account creation failed due to error {e}")
+        raise exceptions.AccountCreationFailed(f"Account creation failed due to other error: {e}")
 
 def remove_account(account_name):
     try:
         with shelve.open("accounts", 'c') as shelf:
             del shelf[account_name]
+    except KeyError:
+        raise exceptions.AccountRemovalFailed("Account removal failed: account does not exist.")
     except Exception as e:
-        raise exceptions.AccountRemovalFailed(f"Account removal failed due to error {e}")
+        raise exceptions.AccountRemovalFailed(f"Account removal failed due to other error: {e}")
 
 def edit_account(acct_name, new_name, new_funds, new_monthly_income):
     try:
@@ -28,6 +29,9 @@ def edit_account(acct_name, new_name, new_funds, new_monthly_income):
         raise exceptions.AccountEditingFailed("Account editing failed: account does not exist.")
     
     if new_name != None:
+        with shelve.open("accounts", 'c') as shelf:
+            del shelf[acct.name]
+            # Must delete old key associated with account
         acct.name = new_name
     if new_funds != None:
         acct.funds = new_funds
@@ -42,10 +46,10 @@ def view_account(account_name):
     except KeyError:
         raise exceptions.AccountViewingFailed("Account viewing failed: account does not exist.")
     
-    print(tabulate([[acct.name, acct.funds, acct.monthly_income]],
-                   headers=["Name", "Funds ($)", "Monthly Income ($)"]))
+    print(tabulate([[acct.name, acct.funds, acct.monthly_income, acct.last_pay_day, acct.next_pay_day]],
+                   headers=["Name", "Funds ($)", "Monthly Income ($)", "Last Pay Date", "Next Pay Date"]))
 
-def create_category(account_name, cat_name, desc, budget):
+def add_category(account_name, cat_name, desc, budget):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -86,9 +90,12 @@ def edit_category(account_name, cat_name, new_name, new_desc, new_funds, new_bud
         raise exceptions.CategoryEditingFailed("Category editing failed: category does not exist.")
     
     if new_name != None:
+        del acct.categories[cat.name]
         cat.name = new_name
+        acct.categories[cat.name] = cat
+        # Must delete old key, and save new one when name is changed
     if new_desc != None:
-        cat.name = new_desc
+        cat.desc = new_desc
     if new_funds != None:
         cat.funds = new_funds
     if new_budget != None:
@@ -109,7 +116,7 @@ def view_category(account_name, cat_name):
     
     print(tabulate([[cat.name, cat.desc, cat.funds, cat.budget]],
                    headers=["Name", "Desc.", "Funds ($)", "Budget ($)"]))
-    
+    print()
     print("Category Expenditures")
     exps = [[exp.name, exp.desc, exp.amount] for exp in cat.expenditures]
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)"]))
@@ -177,7 +184,7 @@ def edit_expenditure(account_name, exp_name, new_desc, new_amount):
     acct.funds -= difference
     acct.sync()
 
-def view_expenditure(account_name):
+def view_expenditures(account_name):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:

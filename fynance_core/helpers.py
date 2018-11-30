@@ -36,3 +36,5 @@ def get_expenditure(account, expenditure_name):
     # Getting and returning an expenditure. Returns none if exp. DNE. must take account object as param.
     expenditure = account.expenditures[expenditure_name]
     return expenditure
+
+# TODO: Finish writing tests

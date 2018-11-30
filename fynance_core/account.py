@@ -19,7 +19,8 @@ class Account:
         self.categories = {}
         # Decided to ultimately use a dict here as access is
         # quicker than a list
-        self.pay_day = date.today()
+        self.last_pay_day = date.today()
+        self.next_pay_day = date.today() + timedelta(days=30)
 
     def __str__(self):
         return "Account {}".format(self.name)
@@ -29,9 +30,10 @@ class Account:
         Method to check if a payday has passed, and if
         it has, automatically add funds to the account
         """
-        if date.today() >= self.pay_day + timedelta(days=30):
+        if date.today() >= self.next_pay_day:
             self.funds += self.monthly_income
-            self.pay_day += timedelta(days=30)
+            self.last_pay_day = self.next_pay_day
+            self.next_pay_day += timedelta(days=30)
             for cat in self.categories:
                 self.categories[cat].funds = self.categories[cat].budget + self.categories[cat].funds
 
