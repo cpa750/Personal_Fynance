@@ -1,10 +1,5 @@
 import shelve
 
-def check_paydays():
-    with shelve.open("accounts", 'c') as shelf:
-        for account in shelf:
-            shelf[account].check_for_pay_day()
-
 def check_for_account(account_name):
     # Checking if an account exists
     if account_name in shelve.open("accounts", 'c'):

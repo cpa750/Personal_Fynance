@@ -62,10 +62,15 @@ def remove_category(account_name, cat_name):
     except KeyError:
         raise exceptions.CategoryRemovalFailed("Category removal failed: account does not exist.")
 
-    if not helpers.check_for_category(acct, cat_name):
+    try:
+        cat = helpers.get_category(acct, cat_name)
+    except KeyError:
         raise exceptions.CategoryRemovalFailed("Category removal failed: category does not exist.")
-    else:
-        del acct.categories[cat_name]
+
+    for exp in cat.expenditures:
+        exp.category = None
+    
+    del acct.categories[cat_name]
     
     acct.sync()
 
@@ -124,6 +129,7 @@ def add_expenditure(account_name, cat_name, name, desc, amount):
     acct.funds -= exp.amount
     if exp.category != None:
         exp.category.funds -= exp.amount
+        exp.category.expenditures[exp.name] = exp
 
     acct.sync()
 
@@ -142,6 +148,7 @@ def remove_expenditure(account_name, expenditure_name):
     acct.funds += exp.amount
     if exp.category != None:
         exp.category.funds += exp.amount
+        del exp.category.expenditures[exp.name]
 
     acct.sync()
 
@@ -176,4 +183,7 @@ def view_expenditure(account_name):
 
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)", "Category"]))
 
-# TODO: Write the rest of these functions
+def check_paydays():
+    with shelve.open("accounts", 'c') as shelf:
+        for account in shelf:
+            shelf[account].check_for_pay_day()
