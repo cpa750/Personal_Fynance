@@ -72,6 +72,7 @@ def remove_category(account_name, cat_name):
         raise exceptions.CategoryRemovalFailed("Category removal failed: category does not exist.")
 
     for exp in cat.expenditures:
+        exp = cat.expenditures[exp]
         exp.category = None
     
     del acct.categories[cat_name]
@@ -107,7 +108,7 @@ def view_category(account_name, cat_name):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
-        raise exceptions.CategoryViewingFailed("Category viewing faild: account does not exist.")
+        raise exceptions.CategoryViewingFailed("Category viewing failed: account does not exist.")
 
     try:
         cat = helpers.get_category(acct, cat_name)
@@ -118,7 +119,11 @@ def view_category(account_name, cat_name):
                    headers=["Name", "Desc.", "Funds ($)", "Budget ($)"]))
     print()
     print("Category Expenditures")
-    exps = [[exp.name, exp.desc, exp.amount] for exp in cat.expenditures]
+    exps = []
+    for exp_name in acct.expenditures:
+        exp = acct.expenditures[exp_name]
+        exps.append([exp.name, exp.desc, exp.amount])
+
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)"]))
 
 def add_expenditure(account_name, cat_name, name, desc, amount):
@@ -190,7 +195,14 @@ def view_expenditures(account_name):
     except KeyError:
         raise exceptions.ExpViewingFailed("Expenditure viewing failed: account does not exist.")
 
-    exps = [[exp.name, exp.desc, exp.amount, exp.category.name] for exp in acct.expenditures]
+    exps = []
+    for exp_name in acct.expenditures:
+        exp = acct.expenditures[exp_name]
+        if exp.category != None:
+            exps.append([exp.name, exp.desc, exp.amount, exp.category.name])
+        else:
+            exps.append([exp.name, exp.desc, exp.amount, ''])
+
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)", "Category"]))
 
 def check_paydays():
