@@ -2,6 +2,7 @@ from fynance_core import accountmanager
 import os
 
 # Testing all the account-related API functions
+print("Account-related functions\n")
 accountmanager.add_account("Cian", 30, 50)
 accountmanager.view_account("Cian")
 print('\n')
@@ -37,6 +38,7 @@ except Exception as e:
 print('\n')
 
 # Testing all category-related commands
+print("Category-related functions\n")
 accountmanager.add_account("Cian", 100, 300)
 accountmanager.add_category("Cian", "Blah", "Random", 50)
 accountmanager.view_category("Cian", "Blah")
@@ -48,6 +50,7 @@ print('\n')
 # There was no easy way to call a bunch of fucntions with params
 # And get each individual one's error messages with try/except,
 # Hence the hacky workaround
+# This is to test that raising errors works as expected.
 functions = (
     'accountmanager.view_category("John", "Blah")',
     'accountmanager.view_category("Cian", "asdf")',
@@ -66,7 +69,8 @@ print('\n')
 accountmanager.remove_category("Cian", "Foo")
 accountmanager.remove_account("Cian")
 
-
+# Testing all expenditure-related commands
+print("Exp-related functions\n")
 accountmanager.add_account("Cian", 50, 100)
 accountmanager.add_category("Cian", "Foo", "Bar", 25)
 accountmanager.add_expenditure("Cian", '', "Rand", "desc", 5)
@@ -97,6 +101,11 @@ accountmanager.view_category("Cian", "Foo")
 print()
 accountmanager.view_account("Cian")
 accountmanager.remove_category("Cian", "Foo")
+accountmanager.view_account("Cian")
+print()
+accountmanager.view_expenditures("Cian")
+print()
+accountmanager.remove_expenditure("Cian", "Blah")
 accountmanager.view_account("Cian")
 print()
 accountmanager.view_expenditures("Cian")
