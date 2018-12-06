@@ -9,11 +9,7 @@ class Category:
         self.desc = desc
         self.budget = budget
         self.funds = budget
-        self.expenditures = []
+        self.expenditures = {}
 
     def __str__(self):
         return "Category {}".format(self.name)
-
-    def add_expenditure(self, expenditure):
-        self.expenditures.append(expenditure)
-        self.funds -= expenditure.amount
