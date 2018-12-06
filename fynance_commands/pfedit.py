@@ -1,7 +1,7 @@
 import errno
 import sys
 
-from fynance_core import accountmanager, exceptions
+from fynance_core.utils import accountmanager, exceptions
 
 accountmanager.check_paydays()
 

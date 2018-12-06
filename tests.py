@@ -1,4 +1,4 @@
-from fynance_core import accountmanager
+from fynance_core.utils import accountmanager
 import os
 
 # Testing all the account-related API functions

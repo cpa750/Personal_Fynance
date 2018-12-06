@@ -1,7 +1,7 @@
 import errno
 import sys
 
-from fynance_core import accountmanager, exceptions
+from fynance_core.utils import accountmanager, exceptions
 
 accountmanager.check_paydays()
 
@@ -32,7 +32,7 @@ elif arg == "category":
 
     try:
         cat_budget = int(input("Category budget: $"))
-        accountmanager.add_category()
+        accountmanager.add_category(account_name, cat_name, cat_desc, cat_budget)
         print("Category successfully added")
     except ValueError:
         print("Integers only")
