@@ -5,14 +5,9 @@ from tabulate import tabulate
 from . import exceptions, helpers
 from ..datamodels import account, category, expenditure
 
-# TODO: Remember to validate user input in the CLI!!
-
 def add_account(name: str, funds: float, monthly_income: float):
-    try:
-        acct = account.Account(name, funds, monthly_income)
-        acct.sync()
-    except Exception as e:
-        raise exceptions.AccountCreationFailed(f"Account creation failed due to other error: {e}")
+    acct = account.Account(name, funds, monthly_income)
+    acct.sync()
 
 def remove_account(account_name: str):
     try:
@@ -20,8 +15,6 @@ def remove_account(account_name: str):
             del shelf[account_name]
     except KeyError:
         raise exceptions.AccountRemovalFailed("Account removal failed: account does not exist.")
-    except Exception as e:
-        raise exceptions.AccountRemovalFailed(f"Account removal failed due to other error: {e}")
 
 def edit_account(acct_name: str, new_name: str, new_funds: float, new_monthly_income: float):
     """Passing any new_* params as None will leave the attribute as-is."""

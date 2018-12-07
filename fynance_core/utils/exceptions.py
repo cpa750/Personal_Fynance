@@ -1,6 +1,3 @@
-class AccountCreationFailed(Exception):
-    pass
-
 class AccountRemovalFailed(Exception):
     pass
 
