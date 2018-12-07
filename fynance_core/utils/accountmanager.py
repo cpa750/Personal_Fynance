@@ -2,8 +2,8 @@ import shelve
 
 from tabulate import tabulate
 
-from ..datamodels import account, category, expenditure
 from . import exceptions, helpers
+from ..datamodels import account, category, expenditure
 
 # TODO: Remember to validate user input in the CLI!!
 
