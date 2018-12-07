@@ -14,8 +14,8 @@ except IndexError:
 if arg == "account":
     account_name = input("Account name: ")
     try:
-        account_funds = int(input("Account funds: $"))
-        account_monthly_income = int(input("Account monthly income: $"))
+        account_funds = float(input("Account funds: $"))
+        account_monthly_income = float(input("Account monthly income: $"))
         accountmanager.add_account(account_name, account_funds, account_monthly_income)
         print("Account successfully added")
     except ValueError:
@@ -31,7 +31,7 @@ elif arg == "category":
     cat_desc = input("Category description: ")
 
     try:
-        cat_budget = int(input("Category budget: $"))
+        cat_budget = float(input("Category budget: $"))
         accountmanager.add_category(account_name, cat_name, cat_desc, cat_budget)
         print("Category successfully added")
     except ValueError:
@@ -48,7 +48,7 @@ elif arg == "expenditure":
     cat_name = input("Expenditure's category name (for no category press enter): ")
 
     try:
-        exp_amount = int(input("Expenditure amount: $"))
+        exp_amount = float(input("Expenditure amount: $"))
         accountmanager.add_expenditure(account_name, cat_name, exp_name, exp_desc, exp_amount)
         print("Expenditure successfully added")
     except ValueError:

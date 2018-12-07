@@ -17,8 +17,8 @@ if arg == "account":
     new_name = input("New account name: ")
     
     try:
-        new_funds = int(input("New funds: $"))
-        new_monthly_income = int(input("New monthly income: $"))
+        new_funds = float(input("New funds: $"))
+        new_monthly_income = float(input("New monthly income: $"))
         accountmanager.edit_account(account_name, new_name, new_funds, new_monthly_income)
         print("Account successfully edited")
     except ValueError:
@@ -36,8 +36,8 @@ elif arg == "category":
     new_desc = input("New description: ")
     
     try:
-        new_funds = int(input("New funds: $"))
-        new_budget = int(input("New budget: $"))
+        new_funds = float(input("New funds: $"))
+        new_budget = float(input("New budget: $"))
         accountmanager.edit_category(account_name, cat_name, new_name, new_desc,
                                      new_funds, new_budget)
         print("Category successfully edited")
@@ -55,7 +55,7 @@ elif arg == "expenditure":
     new_desc = input("New description: ")
 
     try:
-        new_amount = int(input("New amount"))
+        new_amount = float(input("New amount"))
         accountmanager.edit_expenditure(account_name, exp_name, new_desc, new_amount)
         print("Expenditure successfully edited")
     except ValueError:
