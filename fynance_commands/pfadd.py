@@ -19,7 +19,7 @@ if arg == "account":
         accountmanager.add_account(account_name, account_funds, account_monthly_income)
         print("Account successfully added")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.AccountCreationFailed as e:
         print(e)
@@ -35,7 +35,7 @@ elif arg == "category":
         accountmanager.add_category(account_name, cat_name, cat_desc, cat_budget)
         print("Category successfully added")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.CategoryCreationFailed as e:
         print(e)
@@ -52,7 +52,7 @@ elif arg == "expenditure":
         accountmanager.add_expenditure(account_name, cat_name, exp_name, exp_desc, exp_amount)
         print("Expenditure successfully added")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.ExpCreationFailed as e:
         print(e)

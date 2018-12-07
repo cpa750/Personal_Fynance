@@ -7,14 +7,14 @@ from . import exceptions, helpers
 
 # TODO: Remember to validate user input in the CLI!!
 
-def add_account(name, funds, monthly_income):
+def add_account(name: str, funds: float, monthly_income: float):
     try:
         acct = account.Account(name, funds, monthly_income)
         acct.sync()
     except Exception as e:
         raise exceptions.AccountCreationFailed(f"Account creation failed due to other error: {e}")
 
-def remove_account(account_name):
+def remove_account(account_name: str):
     try:
         with shelve.open("accounts", 'c') as shelf:
             del shelf[account_name]
@@ -23,7 +23,8 @@ def remove_account(account_name):
     except Exception as e:
         raise exceptions.AccountRemovalFailed(f"Account removal failed due to other error: {e}")
 
-def edit_account(acct_name, new_name, new_funds, new_monthly_income):
+def edit_account(acct_name: str, new_name: str, new_funds: float, new_monthly_income: float):
+    """Passing any new_* params as None will leave the attribute as-is."""
     try:
         acct = helpers.get_account(acct_name)
     except KeyError:
@@ -41,7 +42,7 @@ def edit_account(acct_name, new_name, new_funds, new_monthly_income):
     
     acct.sync()
 
-def view_account(account_name):
+def view_account(account_name: str):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -50,7 +51,7 @@ def view_account(account_name):
     print(tabulate([[acct.name, acct.funds, acct.monthly_income, acct.last_pay_day, acct.next_pay_day]],
                    headers=["Name", "Funds ($)", "Monthly Income ($)", "Last Pay Date", "Next Pay Date"]))
 
-def add_category(account_name, cat_name, desc, budget):
+def add_category(account_name: str, cat_name: str, desc: str, budget: float):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -61,7 +62,7 @@ def add_category(account_name, cat_name, desc, budget):
 
     acct.sync()
 
-def remove_category(account_name, cat_name):
+def remove_category(account_name: str, cat_name: str):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -80,7 +81,9 @@ def remove_category(account_name, cat_name):
     
     acct.sync()
 
-def edit_category(account_name, cat_name, new_name, new_desc, new_funds, new_budget):
+def edit_category(account_name: str, cat_name: str, new_name: str,
+                  new_desc: str, new_funds: float, new_budget: float):
+    """Passing any new_* params as None will leave the attribute as-is."""
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -105,7 +108,7 @@ def edit_category(account_name, cat_name, new_name, new_desc, new_funds, new_bud
     
     acct.sync()
 
-def view_category(account_name, cat_name):
+def view_category(account_name: str, cat_name: str):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -127,20 +130,22 @@ def view_category(account_name, cat_name):
 
     print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)"]))
 
-def add_expenditure(account_name, cat_name, name, desc, amount):
+def add_expenditure(account_name: str, cat_name: str, name: str,
+                    desc: str, amount: float):
+    """Passing in the cat_name as None will add the exp. with no category."""
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
         raise exceptions.ExpCreationFailed("Expenditure creation failed: account does not exist.")
 
-    if cat_name != '':
+    if cat_name != None:
         try:
             cat = helpers.get_category(acct, cat_name)
         except KeyError:
             raise exceptions.ExpCreationFailed("Expenditure creation failed: category does not exist.")
     else:
         cat = None
-
+    
     exp = expenditure.Expenditure(name, desc, amount, cat)
     acct.expenditures[name] = exp
     acct.funds -= exp.amount
@@ -150,7 +155,7 @@ def add_expenditure(account_name, cat_name, name, desc, amount):
 
     acct.sync()
 
-def remove_expenditure(account_name, expenditure_name):
+def remove_expenditure(account_name: str, expenditure_name: str):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -169,7 +174,8 @@ def remove_expenditure(account_name, expenditure_name):
 
     acct.sync()
 
-def edit_expenditure(account_name, exp_name, new_desc, new_amount):
+def edit_expenditure(account_name: str, exp_name: str, new_desc: str, new_amount: float):
+    """Passing any new_* params as None will leave the attribute as-is."""
     try:
         acct = helpers.get_account(account_name)
     except KeyError:
@@ -185,12 +191,12 @@ def edit_expenditure(account_name, exp_name, new_desc, new_amount):
     if new_amount != None:
         difference = new_amount - exp.amount
         exp.amount = new_amount
-    if exp.category != None:
-        exp.category.funds -= difference
-    acct.funds -= difference
+        acct.funds -= difference
+        if exp.category != None:
+            exp.category.funds -= difference
     acct.sync()
 
-def view_expenditures(account_name):
+def view_expenditures(account_name: str):
     try:
         acct = helpers.get_account(account_name)
     except KeyError:

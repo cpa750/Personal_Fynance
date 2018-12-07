@@ -1,26 +1,5 @@
 import shelve
 
-def check_for_account(account_name):
-    # Checking if an account exists
-    if account_name in shelve.open("accounts", 'c'):
-        return True
-    else:
-        return False
-
-def check_for_category(account, category_name):
-    # Checking if a category exists. must take an account object as a param
-    if category_name in account.categories:
-        return True
-    else:
-        return False
-
-def check_for_expenditure(account, expenditure_name):
-    # Checking if an exp. exists. must take an account object as a param
-    if expenditure_name in account.expenditures:
-        return True
-    else:
-        return False
-
 def get_account(account_name):
     # Getting and returning a specific account object. Must use error handling in case account DNE.
     with shelve.open("accounts", 'c') as shelf:
