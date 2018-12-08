@@ -57,9 +57,9 @@ def view_account(account_name: str):
         acct = helpers.get_account(account_name)
     except KeyError:
         raise exceptions.AccountViewingFailed("Account viewing failed: account does not exist.")
-    
-    print(tabulate([[acct.name, acct.funds, acct.monthly_income, acct.last_pay_day, acct.next_pay_day]],
-                   headers=["Name", "Funds ($)", "Monthly Income ($)", "Last Pay Date", "Next Pay Date"]))
+
+    return ([acct.name, acct.funds, acct.monthly_income, acct.last_pay_day, acct.next_pay_day],
+            ["Name", "Funds ($)", "Monthly Income ($)", "Last Pay Date", "Next Pay Date"])
 
 def add_category(account_name: str, cat_name: str, desc: str, budget: float):
     typesafe = helpers.check_param_types((account_name, str), (cat_name, str), (desc, str),
@@ -148,16 +148,15 @@ def view_category(account_name: str, cat_name: str):
     except KeyError:
         raise exceptions.CategoryViewingFailed("Category viewing failed: category does not exist.")
     
-    print(tabulate([[cat.name, cat.desc, cat.funds, cat.budget]],
-                   headers=["Name", "Desc.", "Funds ($)", "Budget ($)"]))
-    print()
     print("Category Expenditures")
     exps = []
     for exp_name in acct.expenditures:
         exp = acct.expenditures[exp_name]
         exps.append([exp.name, exp.desc, exp.amount])
 
-    print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)"]))
+    return ([cat.name, cat.desc, cat.funds, cat.budget],
+            ["Name", "Desc.", "Funds ($)", "Budget ($)"],
+            exps, ["Name", "Desc.", "Amount ($)"])
 
 def add_expenditure(account_name: str, cat_name: str, name: str,
                     desc: str, amount: float):
@@ -257,7 +256,7 @@ def view_expenditures(account_name: str):
         else:
             exps.append([exp.name, exp.desc, exp.amount, ''])
 
-    print(tabulate(exps, headers=["Name", "Desc.", "Amount ($)", "Category"]))
+    return (exps, ["Name", "Desc.", "Amount ($)", "Category"])
 
 def check_paydays():
     with shelve.open("accounts", 'c') as shelf:

@@ -3,6 +3,8 @@ import sys
 
 from fynance_core.utils import accountmanager, exceptions
 
+from tabulate import tabulate
+
 accountmanager.check_paydays()
 
 try:
@@ -15,7 +17,8 @@ if arg == "account":
     account_name = input("Account name: ")
     
     try:
-        accountmanager.view_account(account_name)
+        data, headers = accountmanager.view_account(account_name)
+        print(tabulate([data], headers))
     except exceptions.AccountViewingFailed as e:
         print(e)
         sys.exit(errno.EAGAIN)
@@ -25,7 +28,10 @@ elif arg == "category":
     cat_name = input("Category name: ")
 
     try:
-        accountmanager.view_category(account_name, cat_name)
+        data, headers, exps, headers2 = accountmanager.view_category(account_name, cat_name)
+        print(tabulate([data], headers))
+        print()
+        print(tabulate(exps, headers2))
     except exceptions.CategoryViewingFailed as e:
         print(e)
         sys.exit(errno.EAGAIN)
@@ -34,7 +40,8 @@ elif arg == "expenditures":
     account_name = input("Account name: ")
 
     try:
-        accountmanager.view_expenditures(account_name)
+        exps, headers = accountmanager.view_expenditures(account_name)
+        print(tabulate(exps, headers))
     except exceptions.ExpViewingFailed as e:
         print(e)
         sys.exit(errno.EAGAIN)
