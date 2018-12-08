@@ -1,9 +1,8 @@
 import shelve
 
-from tabulate import tabulate
-
 from . import exceptions, helpers
 from ..datamodels import account, category, expenditure
+
 
 def add_account(name: str, funds: float, monthly_income: float):
     typesafe = helpers.check_param_types((name, str), (funds, float), (monthly_income, float))
