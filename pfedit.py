@@ -83,9 +83,9 @@ elif arg == "expenditure":
 
     try:
         new_amount = input("New amount: $")
-        if neaccountmanageramount == '':
-            naccountmanager_amount = None
-        else:accountmanager
+        if new_amount == '':
+            new_amount = None
+        else:
             new_amount = float(new_amount)
             
         accountmanager.edit_expenditure(account_name, exp_name, new_desc, new_amount)
