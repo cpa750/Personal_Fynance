@@ -30,7 +30,7 @@ elif arg == "category":
     try:
         data, headers, exps, headers2 = accountmanager.view_category(account_name, cat_name)
         print(tabulate([data], headers))
-        print()
+        print("\nCategory Expenditures:")
         print(tabulate(exps, headers2))
     except exceptions.CategoryViewingFailed as e:
         print(e)

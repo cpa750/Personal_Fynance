@@ -147,8 +147,7 @@ def view_category(account_name: str, cat_name: str):
         cat = helpers.get_category(acct, cat_name)
     except KeyError:
         raise exceptions.CategoryViewingFailed("Category viewing failed: category does not exist.")
-    
-    print("Category Expenditures")
+        
     exps = []
     for exp_name in acct.expenditures:
         exp = acct.expenditures[exp_name]

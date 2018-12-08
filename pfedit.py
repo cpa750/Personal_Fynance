@@ -78,12 +78,12 @@ elif arg == "expenditure":
     exp_name = input("Expenditure name: ")
     print("To leave any field unchanged, simply press enter.")
     new_desc = input("New description: ")
-    if new_desc = '':
+    if new_desc == '':
         new_desc = None
 
     try:
-        new_amount = input("New amount")
-        if new_amount = '':
+        new_amount = input("New amount: $")
+        if new_amount == '':
             new_amount = None
         else:
             new_amount = float(new_amount)
