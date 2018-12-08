@@ -3,10 +3,10 @@ import os
 
 # Testing all the account-related API functions
 print("Account-related functions\n")
-accountmanager.add_account("Cian", 30, 50)
+accountmanager.add_account("Cian", 30.0, 50.0)
 accountmanager.view_account("Cian")
 print('\n')
-accountmanager.edit_account("Cian", "John", 50, None)
+accountmanager.edit_account("Cian", "John", 50.0, None)
 
 try:
     accountmanager.view_account("Cian")
@@ -17,7 +17,7 @@ print('\n')
 
 accountmanager.view_account("John")
 print('\n')
-accountmanager.edit_account("John", None, 30, 80)
+accountmanager.edit_account("John", None, 30.0, 80.0)
 
 try:
     accountmanager.edit_account("Cian", None, None, None)
@@ -39,11 +39,11 @@ print('\n')
 
 # Testing all category-related commands
 print("Category-related functions\n")
-accountmanager.add_account("Cian", 100, 300)
-accountmanager.add_category("Cian", "Blah", "Random", 50)
+accountmanager.add_account("Cian", 100.0, 300.0)
+accountmanager.add_category("Cian", "Blah", "Random", 50.0)
 accountmanager.view_category("Cian", "Blah")
 print('\n')
-accountmanager.edit_category("Cian", "Blah", "Foo", "Bar", 40, 60)
+accountmanager.edit_category("Cian", "Blah", "Foo", "Bar", 40.0, 60.0)
 accountmanager.view_category("Cian", "Foo")
 print('\n')
 
@@ -71,14 +71,14 @@ accountmanager.remove_account("Cian")
 
 # Testing all expenditure-related commands
 print("Exp-related functions\n")
-accountmanager.add_account("Cian", 50, 100)
-accountmanager.add_category("Cian", "Foo", "Bar", 25)
-accountmanager.add_expenditure("Cian", None, "Rand", "desc", 5)
+accountmanager.add_account("Cian", 50.0, 100.0)
+accountmanager.add_category("Cian", "Foo", "Bar", 25.0)
+accountmanager.add_expenditure("Cian", None, "Rand", "desc", 5.0)
 accountmanager.view_expenditures("Cian")
 print()
 accountmanager.view_account("Cian")
 print()
-accountmanager.edit_expenditure("Cian", "Rand", "new desc", 6)
+accountmanager.edit_expenditure("Cian", "Rand", "new desc", 6.0)
 accountmanager.view_expenditures("Cian")
 print()
 accountmanager.view_account("Cian")
@@ -87,14 +87,14 @@ accountmanager.remove_expenditure("Cian", "Rand")
 accountmanager.view_account("Cian")
 print()
 
-accountmanager.add_expenditure("Cian", "Foo", "Blah", "desc", 10)
+accountmanager.add_expenditure("Cian", "Foo", "Blah", "desc", 10.0)
 accountmanager.view_expenditures("Cian")
 print()
 accountmanager.view_category("Cian", "Foo")
 print()
 accountmanager.view_account("Cian")
 print()
-accountmanager.edit_expenditure("Cian", "Blah", None, 5)
+accountmanager.edit_expenditure("Cian", "Blah", None, 5.0)
 accountmanager.view_expenditures("Cian")
 print()
 accountmanager.view_category("Cian", "Foo")
