@@ -1,6 +1,8 @@
 from fynance_core.utils import accountmanager
 import os
 
+from tabulate import tabulate
+
 # Testing all the account-related API functions
 
 # Testing that type checking works as expected
@@ -21,18 +23,21 @@ accountmanager.remove_account("Cian")
 print('\n')
 print("Account-related functions\n")
 accountmanager.add_account("Cian", 30.0, 50.0)
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print('\n')
 accountmanager.edit_account("Cian", "John", 50.0, None)
 
 try:
-    accountmanager.view_account("Cian")
+    data, headers = accountmanager.view_account("Cian")
+    print(tabulate([data], headers))
 except Exception as e:
     print(e)
 
 print('\n')
 
-accountmanager.view_account("John")
+data, headers = accountmanager.view_account("John")
+print([data], headers)
 print('\n')
 accountmanager.edit_account("John", None, 30.0, 80.0)
 
@@ -43,7 +48,8 @@ except Exception as e:
 
 print('\n')
 
-accountmanager.view_account("John")
+data, headers = accountmanager.view_account("John")
+print(tabulate([data], headers))
 print('\n')
 accountmanager.remove_account("John")
 
@@ -58,16 +64,22 @@ print('\n')
 print("Category-related functions\n")
 accountmanager.add_account("Cian", 100.0, 300.0)
 accountmanager.add_category("Cian", "Blah", "Random", 50.0)
-accountmanager.view_category("Cian", "Blah")
+data, headers1, exps, headers2 = accountmanager.view_category("Cian", "Blah")
+print(tabulate([data], headers1))
+print(tabulate(exps, headers2))
 print('\n')
 accountmanager.edit_category("Cian", "Blah", "Foo", "Bar", 40.0, 60.0)
-accountmanager.view_category("Cian", "Foo")
+data, headers1, exps, headers2 = accountmanager.view_category("Cian", "Foo")
+print(tabulate([data], headers1))
+print(tabulate(exps, headers2))
 print('\n')
 
-# There was no easy way to call a bunch of fucntions with params
-# And get each individual one's error messages with try/except,
-# Hence the hacky workaround
-# This is to test that raising errors works as expected.
+"""
+There was no easy way to call a bunch of fucntions with params
+And get each individual one's error messages with try/except,
+Hence the hacky workaround
+This block of code tests that raising exceptions works as expected.
+"""
 functions = (
     'accountmanager.view_category("John", "Blah")',
     'accountmanager.view_category("Cian", "asdf")',
@@ -91,40 +103,57 @@ print("Exp-related functions\n")
 accountmanager.add_account("Cian", 50.0, 100.0)
 accountmanager.add_category("Cian", "Foo", "Bar", 25.0)
 accountmanager.add_expenditure("Cian", None, "Rand", "desc", 5.0)
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate(exps, headers))
 print()
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
 accountmanager.edit_expenditure("Cian", "Rand", "new desc", 6.0)
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate([data], headers))
 print()
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
 accountmanager.remove_expenditure("Cian", "Rand")
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
 
 accountmanager.add_expenditure("Cian", "Foo", "Blah", "desc", 10.0)
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate(exps, headers))
 print()
-accountmanager.view_category("Cian", "Foo")
+data, headers1, exps, headers2 = accountmanager.view_category("Cian", "Foo")
+print(tabulate([data], headers1))
+print(tabulate(exps, headers2))
 print()
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
 accountmanager.edit_expenditure("Cian", "Blah", None, 5.0)
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate(exps, headers))
 print()
-accountmanager.view_category("Cian", "Foo")
+data, headers1, exps, headers2 = accountmanager.view_category("Cian", "Foo")
+print(tabulate([data], headers1))
+print(tabulate(exps, headers2))
 print()
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 accountmanager.remove_category("Cian", "Foo")
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate(exps, headers))
 print()
 accountmanager.remove_expenditure("Cian", "Blah")
-accountmanager.view_account("Cian")
+data, headers = accountmanager.view_account("Cian")
+print(tabulate([data], headers))
 print()
-accountmanager.view_expenditures("Cian")
+exps, headers = accountmanager.view_expenditures("Cian")
+print(tabulate(exps, headers))
 
 os.remove("accounts")
