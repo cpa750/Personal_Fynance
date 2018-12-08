@@ -2,6 +2,23 @@ from fynance_core.utils import accountmanager
 import os
 
 # Testing all the account-related API functions
+
+# Testing that type checking works as expected
+try:
+    accountmanager.add_account(None, None, None)
+    # Calling API with None, when params are not optional
+except Exception as e:
+    print(e)
+accountmanager.add_account("Cian", 50.0, 100.0)
+try:
+    accountmanager.edit_account("Cian", 32, "foo", "bar")
+    # Calling the API with the wrong types
+except Exception as e:
+    print(e)
+accountmanager.remove_account("Cian")
+
+
+print('\n')
 print("Account-related functions\n")
 accountmanager.add_account("Cian", 30.0, 50.0)
 accountmanager.view_account("Cian")
