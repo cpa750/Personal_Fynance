@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"pyqt5" = "*"
 pip = "==18.0"
+tabulate = "*"
 
 [dev-packages]
+pylint = "*"
+"autopep8" = "*"
 
 [requires]
 python_version = "3.6"
