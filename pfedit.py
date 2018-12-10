@@ -1,7 +1,7 @@
 import errno
 import sys
 
-from fynance_core import accountmanager, exceptions
+from fynance_core.utils import accountmanager, exceptions
 
 accountmanager.check_paydays()
 
@@ -15,14 +15,26 @@ if arg == "account":
     account_name = input("Account name: ")
     print("To leave any field unchanged, simply press enter.")
     new_name = input("New account name: ")
+    if new_name == '':
+        new_name = None
     
     try:
-        new_funds = int(input("New funds: $"))
-        new_monthly_income = int(input("New monthly income: $"))
+        new_funds = input("New funds: $")
+        if new_funds == '':
+            new_funds = None
+        else:
+            new_funds = float(new_funds)
+
+        new_monthly_income = input("New monthly income: $")
+        if new_monthly_income == '':
+            new_monthly_income = None
+        else:
+            new_monthly_income = float(new_monthly_income)
+
         accountmanager.edit_account(account_name, new_name, new_funds, new_monthly_income)
         print("Account successfully edited")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.AccountEditingFailed as e:
         print(e)
@@ -34,15 +46,28 @@ elif arg == "category":
     print("To leave any field unchanged, simply press enter.")
     new_name = input("New name: ")
     new_desc = input("New description: ")
+    if new_name == '':
+        new_name = None
+    if new_desc == '':
+        new_desc = None
     
     try:
-        new_funds = int(input("New funds: $"))
-        new_budget = int(input("New budget: $"))
+        new_funds = input("New funds: $")
+        if new_funds == '':
+            new_funds = None
+        else:
+            new_funds = float(new_funds)
+
+        new_budget = input("New budget: $")
+        if new_budget == '':
+            new_budget = None
+        else:
+            new_budget = float(new_budget)
         accountmanager.edit_category(account_name, cat_name, new_name, new_desc,
                                      new_funds, new_budget)
         print("Category successfully edited")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.CategoryEditingFailed as e:
         print(e)
@@ -53,13 +78,20 @@ elif arg == "expenditure":
     exp_name = input("Expenditure name: ")
     print("To leave any field unchanged, simply press enter.")
     new_desc = input("New description: ")
+    if new_desc == '':
+        new_desc = None
 
     try:
-        new_amount = int(input("New amount"))
+        new_amount = input("New amount: $")
+        if new_amount == '':
+            new_amount = None
+        else:
+            new_amount = float(new_amount)
+            
         accountmanager.edit_expenditure(account_name, exp_name, new_desc, new_amount)
         print("Expenditure successfully edited")
     except ValueError:
-        print("Integers only")
+        print("Floats only")
         sys.exit(errno.EAGAIN)
     except exceptions.ExpEditingFailed as e:
         print(e)
